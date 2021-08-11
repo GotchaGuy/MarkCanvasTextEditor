@@ -12,10 +12,13 @@
       <div class="w-1/5 h-full">
         <h3>Text Layer</h3>
         <label for="content">Enter text</label>
-        <input type="text" id="content" name="content" v-model="textArray[0].content" @change="changeObject()">
+        <input type="text" id="content" name="content" v-model="textArray[0].content">
         <div>
           <label for="size">Font size</label>
-          <input type="text" id="size" name="size" v-model="textArray[0].size" @change="textbox.set({size: textArray[0].size})">
+          <!--          @change="textbox.set({size: textArray[0].size})-->
+          <!--          @change="textbox.size = textArray[0].size"-->
+          <input type="text" id="size" name="size" v-model="textArray[0].size"
+                 @change="changeObject('size', Number(textArray[0].size))">
         </div>
         <div>
           <label for="content">Line Height</label>
@@ -51,7 +54,8 @@ export default {
           lineHeight: "",
         },
       ],
-      textbox: {}
+      textbox: {},
+      canvas: {},
     }
 
   },
@@ -61,14 +65,14 @@ export default {
     //   height: 500,
     //   backgroundColor: 'white'
     // });
-    const canvas = this.initCanvas('canvas');
-    canvas.renderAll();
+    this.canvas = this.initCanvas('canvas');
+    this.canvas.renderAll();
 
     // canvas.on('mouse:over', (e) => {
     //   console.log(e);
     // })
 // 'This is a Textbox object'
-    this.textbox = new fabric.Textbox( this.textArray[0].content , {
+    this.textbox = new fabric.Textbox(this.textArray[0].content, {
       left: 50,
       top: 50,
       fill: '#880E4F',
@@ -79,9 +83,10 @@ export default {
       lineHeight: 0.5,
     });
 
-    canvas.add(this.textbox);
+    this.canvas.add(this.textbox);
 
     console.log(this.textbox);
+
 
   },
   methods: {
@@ -92,8 +97,12 @@ export default {
         backgroundColor: 'white'
       });
     },
-    changeObject() {
-      // canvas.renderAll();
+    changeObject(key, value) {
+      this.textbox.set({size: value})
+      console.log(this.textbox);
+      // this.canvas.renderAll();
+      this.canvas.requestRenderAll();
+
     }
   },
 }
