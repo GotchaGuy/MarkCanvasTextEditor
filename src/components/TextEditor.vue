@@ -1,49 +1,67 @@
 <template>
   <div class="container w-4/5 mx-auto">
-    <div class="header w-full h-24 bg-green-400">
-      <h1>Text Editor</h1>
+    <div class="header w-full h-24 border-b-3 border-primary flex flex-row pt-7">
+      <logo/>
+      <h1 class="text-primary text-xl font-bold pl-2">Text Editor</h1>
+
     </div>
-    <section id="main flex flex-row flex-nowrap min-h-screen">
-      <div class="w-4/5 bg-gray-300 m-0 h-full">
-        <!--        <div class="canvas-container h-80 w-80 bg-white">-->
-        <canvas id="canvas" class=" mx-auto my-auto"></canvas>
-        <!--        </div>-->
+    <!--     flex flex-row flex-nowrap-->
+    <section id="main" class="min-h-screen grid grid-flow-col grid-cols-5 gap-1 grid-rows-1">
+      <div class="bg-gray-300 h-full col-span-4 pt-20 flex flex-row justify-center">
+        <!--                <div class="canvas-container w-4/5 ">-->
+        <canvas id="canvas" class="mx-auto"></canvas>
+        <!--                </div>-->
       </div>
-      <div class="w-1/5 h-full">
-        <h3>Text Layer</h3>
-        <label for="content">Enter text</label>
-        <input type="text" id="content" name="content" v-model="textArray[0].content">
-        <div>
-          <label for="size">Font size</label>
-          <!--          @change="textbox.set({size: textArray[0].size})-->
-          <!--          @change="textbox.size = textArray[0].size"-->
-          <input type="text" id="size" name="size" v-model="textArray[0].size"
-                 @change="changeObject('size', Number(textArray[0].size))">
-        </div>
-        <div>
-          <label for="content">Line Height</label>
-          <input type="text" id="lineHeight" name="lineHeight" v-model="textArray[0].lineHeight">
-        </div>
-        <div>
-          <label for="content">Change Font Family</label>
-          <input type="text" id="fontFam" name="fontFam" v-model="textArray[0].fontFam">
+      <div class="h-full bg-primary col-span-1">
+        <div class="layer" v-for="(layer, i) in textObjects" v-bind:key="i">
+          <h3>Text Layer {{ i }}</h3>
+          <label for="content">Enter text</label>
+          <input type="text" id="content" name="content" v-model="layer.text">
+          <div>
+            <label for="size">Font size</label>
+            <!--          @change="textbox.set({size: textArray[0].size})-->
+            <!--          @change="textbox.size = textArray[0].size"-->
+            <!--            @change="changeObject('size', Number(textArray[0].size))"-->
+            <input type="text" id="size" name="size" v-model="layer.size"
+            >
+          </div>
+          <div>
+            <label for="content">Line Height</label>
+            <input type="text" id="lineHeight" name="lineHeight" v-model="textArray[0].lineHeight">
+          </div>
+          <div>
+<!--            <label for="content">Change Font Family-->
+              <label for="fonts">Choose a Font Family:</label>
+              <select id="fonts" name="fonts">
+                <option :value="layer.fontFamily">Volvo</option>
+                <option value="saab">Saab</option>
+                <option value="fiat">Fiat</option>
+                <option value="audi">Audi</option>
+              </select>
+<!--              <input type="text" id="fontFam" name="fontFam" v-model="textArray[0].fontFam">-->
+          </div>
+          <div class="bg-blue-500">
+            <div>{{ textArray[0].content }}</div>
+          </div>
         </div>
       </div>
     </section>
-    <div class="bg-blue-500">
-      <p>{{ textArray[0].content }}</p>
-    </div>
   </div>
 </template>
 
 <script>
+import logo from "./partials/logo"
 import {fabric} from 'fabric'
 
 export default {
   name: 'TextEditor',
+  components: {
+    logo
+  },
   props: {},
   data() {
     return {
+      fontFamilyArray: ["Inter", "Times New Roman", "Arial", "Georgia", "Roboto", "Verdana", "Tahoma", "Courier", "Tahoma", "Trebuchet"],
       textArray: [
         {
           content: "words words",
@@ -54,6 +72,7 @@ export default {
           lineHeight: "",
         },
       ],
+      textObjects: [],
       textbox: {},
       canvas: {},
     }
@@ -72,7 +91,7 @@ export default {
     //   console.log(e);
     // })
 // 'This is a Textbox object'
-    this.textbox = new fabric.Textbox(this.textArray[0].content, {
+    this.textbox = new fabric.Textbox('words', {
       left: 50,
       top: 50,
       fill: '#880E4F',
@@ -83,17 +102,30 @@ export default {
       lineHeight: 0.5,
     });
 
-    this.canvas.add(this.textbox);
+    this.textbox2 = new fabric.Textbox('more words', {
+      left: 50,
+      top: 50,
+      fill: '#2a6547',
+      stroke: "#50bf87",
+      strokeWidth: 2,
+      size: 16,
+      fontFamily: "Roboto",
+      lineHeight: 0.5,
+    });
 
-    console.log(this.textbox);
+    this.canvas.add(this.textbox, this.textbox2);
+
+    this.textObjects = this.canvas.getObjects();
+
+    console.log(this.canvas.getObjects());
 
 
   },
   methods: {
     initCanvas(id) {
       return new fabric.Canvas(id, {
-        width: 500,
-        height: 500,
+        width: 600,
+        height: 600,
         backgroundColor: 'white'
       });
     },
@@ -108,7 +140,14 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
+h1 {
+  line-height: 70px;
+  font-family: 'Inter';
+}
+
+#canvas {
+  margin: 0 auto;
+}
 
 </style>
