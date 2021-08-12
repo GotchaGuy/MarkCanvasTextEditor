@@ -65,7 +65,6 @@ export default {
       },
       fontFamilyArray: ["Inter", "Times New Roman", "Arial", "Georgia", "Roboto", "Verdana", "Tahoma", "Courier", "Tahoma", "Trebuchet"],
       textObjects: [],
-      textbox: {},
       canvas: {},
     }
 
@@ -99,10 +98,7 @@ export default {
     });
 
     this.canvas.add(this.textbox, this.textbox2);
-
     this.textObjects = this.canvas.getObjects();
-
-    console.log(this.canvas.getObjects());
 
     this.canvas.on('selection:created', (event) => {
       console.log(event.target);
@@ -121,6 +117,19 @@ export default {
         lineHeight: "",
       };
     })
+
+    this.canvas.on({'object:scaling': (event) => {
+        var f = Math.round(event.target.fontSize * event.target.scaleX * 10) / 10;
+        var l = Math.round( event.target.lineHeight * event.target.scaleY * 10) / 10;
+
+    event.target.set({
+        'fontSize'     : f,
+        'lineHeight'      : l,
+        'scaleX'     : 1,
+        'scaleY'     : 1
+    });
+}
+});
 
   },
   methods: {
