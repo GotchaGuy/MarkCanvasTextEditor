@@ -1,49 +1,45 @@
 <template>
-  <div class="container w-4/5 mx-auto">
-    <div class="header w-full h-24 border-b-3 border-primary flex flex-row pt-7">
+  <div class="header w-full h-24 border-b-3 flex flex-row pt-5 bg-white">
+    <div class="container w-4/5 mx-auto flex flex-row">
       <logo/>
       <h1 class="text-primary text-xl font-bold pl-2">Text Editor</h1>
-
     </div>
-    <!--     flex flex-row flex-nowrap-->
-    <section id="main" class="min-h-screen grid grid-flow-col grid-cols-5 gap-1 grid-rows-1">
+  </div>
+  <div class="container w-4/5 mx-auto">
+    <section id="main" class="min-h-screen grid grid-flow-col grid-cols-5 gap-0 grid-rows-1 rounded-lg">
       <div class="bg-gray-300 h-full col-span-4 pt-20 flex flex-row justify-center">
-        <!--                <div class="canvas-container w-4/5 ">-->
         <canvas id="canvas" class="mx-auto"></canvas>
-        <!--                </div>-->
       </div>
-      <div class="h-full bg-primary col-span-1">
-        <div class="layer" v-for="(layer, i) in textObjects" v-bind:key="i">
-          <h3>Text Layer {{ i }}</h3>
-          <label for="content">Enter text</label>
-          <input type="text" id="content" name="content" v-model="layer.text">
-          <div>
-            <label for="size">Font size</label>
-            <!--          @change="textbox.set({size: textArray[0].size})-->
-            <!--          @change="textbox.size = textArray[0].size"-->
-            <!--            @change="changeObject('size', Number(textArray[0].size))"-->
-            <input type="text" id="size" name="size" v-model="layer.size"
-            >
-          </div>
-          <div>
-            <label for="content">Line Height</label>
-            <input type="text" id="lineHeight" name="lineHeight" v-model="textArray[0].lineHeight">
-          </div>
-          <div>
-<!--            <label for="content">Change Font Family-->
-              <label for="fonts">Choose a Font Family:</label>
-              <select id="fonts" name="fonts">
-                <option :value="layer.fontFamily">Volvo</option>
-                <option value="saab">Saab</option>
-                <option value="fiat">Fiat</option>
-                <option value="audi">Audi</option>
+      <div class="h-full bg-green-400 col-span-1  p-4">
+        <button
+            class="w-full h-10 text-center bg-white rounded-sm font-bold text-green-400 hover:bg-green-50 transition ease-in-out duration-500"
+            @click="addNewLayer()">New Text Layer
+        </button>
+        <form class="divide-y divide-light-green-400">
+          <div class="layer pt-2 pb-4">
+            <h3 class="font-bold text-lg">Text Layer</h3>
+            <label for="content">Enter text</label>
+            <input class="bg-gray-100 px-2 h-8 rounded-md" type="text" id="content" name="content"
+                   v-model="currentSelection.text">
+            <div>
+              <label for="size">Font size</label>
+              <input class="bg-gray-100 px-2 h-8 rounded-md" type="text" id="size" name="size"
+                     v-model="currentSelection.fontSize">
+            </div>
+            <div>
+              <label for="content">Line Height</label>
+              <input class="bg-gray-100 px-2 h-8 rounded-md" type="text" id="lineHeight" name="lineHeight"
+                     v-model="currentSelection.lineHeight">
+            </div>
+            <div>
+              <label for="fonts">Choose Font Family:</label>
+              <select class="bg-gray-100 px-2 h-8 rounded-md" id="fonts" name="fonts"
+                      v-model="currentSelection.fontFamily">
+                <option v-for="(font, i) in fontFamilyArray" :value="font" :key="i">{{ font }}</option>
               </select>
-<!--              <input type="text" id="fontFam" name="fontFam" v-model="textArray[0].fontFam">-->
+            </div>
           </div>
-          <div class="bg-blue-500">
-            <div>{{ textArray[0].content }}</div>
-          </div>
-        </div>
+        </form>
       </div>
     </section>
   </div>
@@ -61,17 +57,13 @@ export default {
   props: {},
   data() {
     return {
+      currentSelection: {
+        text: "",
+        size: "",
+        fontFamily: "",
+        lineHeight: "",
+      },
       fontFamilyArray: ["Inter", "Times New Roman", "Arial", "Georgia", "Roboto", "Verdana", "Tahoma", "Courier", "Tahoma", "Trebuchet"],
-      textArray: [
-        {
-          content: "words words",
-          x: "",
-          y: "",
-          fontFam: "",
-          size: "",
-          lineHeight: "",
-        },
-      ],
       textObjects: [],
       textbox: {},
       canvas: {},
@@ -79,27 +71,19 @@ export default {
 
   },
   mounted() {
-    // const canvas = new fabric.Canvas('canvas', {
-    //   width: 500,
-    //   height: 500,
-    //   backgroundColor: 'white'
-    // });
     this.canvas = this.initCanvas('canvas');
     this.canvas.renderAll();
 
-    // canvas.on('mouse:over', (e) => {
-    //   console.log(e);
-    // })
-// 'This is a Textbox object'
     this.textbox = new fabric.Textbox('words', {
       left: 50,
       top: 50,
-      fill: '#880E4F',
-      stroke: "#D81B60",
+      fill: '#a71f67',
+      stroke: "#cb0c51",
       strokeWidth: 2,
       size: 16,
       fontFamily: "Roboto",
       lineHeight: 0.5,
+      strokeUniform: true
     });
 
     this.textbox2 = new fabric.Textbox('more words', {
@@ -111,6 +95,7 @@ export default {
       size: 16,
       fontFamily: "Roboto",
       lineHeight: 0.5,
+      strokeUniform: true
     });
 
     this.canvas.add(this.textbox, this.textbox2);
@@ -119,6 +104,23 @@ export default {
 
     console.log(this.canvas.getObjects());
 
+    this.canvas.on('selection:created', (event) => {
+      console.log(event.target);
+      this.currentSelection = event.target;
+    })
+
+    this.canvas.on('selection:updated', (event) => {
+      this.currentSelection = event.target;
+    })
+
+    this.canvas.on('selection:cleared', () => {
+      this.currentSelection = {
+        text: "",
+        size: "",
+        fontFamily: "",
+        lineHeight: "",
+      };
+    })
 
   },
   methods: {
@@ -129,13 +131,21 @@ export default {
         backgroundColor: 'white'
       });
     },
-    changeObject(key, value) {
-      this.textbox.set({size: value})
-      console.log(this.textbox);
-      // this.canvas.renderAll();
-      this.canvas.requestRenderAll();
-
-    }
+    addNewLayer() {
+      this.canvas.add(new fabric.Textbox('write here', {
+            left: 50,
+            top: 50,
+            fill: '#0a1710',
+            stroke: "#3d3e3e",
+            strokeWidth: 2,
+            size: 16,
+            fontFamily: "Roboto",
+            lineHeight: 1,
+            strokeUniform: true
+          })
+      );
+      console.log(this.canvas.getObjects());
+    },
   },
 }
 </script>
@@ -150,4 +160,7 @@ h1 {
   margin: 0 auto;
 }
 
+label {
+  display: block;
+}
 </style>
