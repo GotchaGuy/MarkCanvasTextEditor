@@ -82,7 +82,6 @@ export default {
       size: 16,
       fontFamily: "Roboto",
       lineHeight: 0.5,
-      strokeUniform: true
     });
 
     this.textbox2 = new fabric.Textbox('more words', {
@@ -94,7 +93,6 @@ export default {
       size: 16,
       fontFamily: "Roboto",
       lineHeight: 0.5,
-      strokeUniform: true
     });
 
     this.canvas.add(this.textbox, this.textbox2);
@@ -150,7 +148,6 @@ export default {
             size: 16,
             fontFamily: "Roboto",
             lineHeight: 1,
-            strokeUniform: true
           })
       );
       console.log(this.canvas.getObjects());
