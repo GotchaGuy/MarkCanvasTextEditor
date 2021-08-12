@@ -1,11 +1,8 @@
 <template>
-<!--  <img alt="Vue logo" src="./assets/logo.png">-->
-<!--  <HelloWorld msg="Welcome to Your Vue.js App"/>-->
   <text-editor/>
 </template>
 
 <script>
-// import HelloWorld from './components/HelloWorld.vue'
 import TextEditor from "./components/TextEditor";
 
 
@@ -16,7 +13,6 @@ export default {
   }
 }
 </script>
-<!--<script src="./lib/fabric.min.js"></script>-->
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@600&display=swap');
